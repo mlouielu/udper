@@ -28,13 +28,19 @@ if __name__ == '__main__':
     DUMMY_1 = b'\x00' * 160
     DUMMY_2 = b'\x10' * 160
 
+    total = 0
     for t in range(10):
         for pk in range(60):
             for _ in range(50):
                 sendto(sock_2, 'localhost', 6600, DUMMY_2)
+            time.sleep(0.002)
             for _ in range(50):
                 sendto(sock_1, 'localhost', 6600, DUMMY_1)
+            time.sleep(0.002)
+
         time.sleep(4)
-        print('RECV')
         data, addr = recv.recvfrom(65535)
-        print(pickle.loads(data))
+        c = pickle.loads(data)
+        diff = c[0x10] - c[0]
+        total += diff
+        print('RECV', c, diff, total, total / (t + 1))
